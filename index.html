@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PC ZONE PANEL</title>
+<style>
+:root{--bg:#080910;--panel:#121521;--line:#292e40;--red:#ff1744;--text:#f5f6ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Tahoma,sans-serif}
+button,input,textarea,select{font:inherit}
+button{border:0;border-radius:10px;padding:11px 14px;background:#d9163e;color:#fff;font-weight:bold;cursor:pointer}
+button:hover{filter:brightness(1.15)}
+button:disabled{opacity:.4;cursor:not-allowed}
+input,textarea,select{width:100%;margin:5px 0 12px;padding:11px;background:#090b13;border:1px solid #34394b;border-radius:9px;color:white}
+input[type=checkbox]{width:auto;margin-right:8px}
+textarea{min-height:75px}
+label{font-size:13px;color:#bbc1d3;display:block}
+.wrap{width:min(1100px,94%);margin:auto}
+.hidden{display:none!important}
+.muted{color:#9da5ba;font-size:12px}
+header{position:sticky;top:0;z-index:20;background:#080910ed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 0}
+.brand{margin:0;font-size:24px;font-weight:1000;background:linear-gradient(90deg,red,orange,yellow,lime,cyan,#2480ff,violet,red);background-size:400% 100%;color:transparent;background-clip:text;-webkit-background-clip:text;animation:rgbText 4s linear infinite;filter:drop-shadow(0 0 6px #ff174455)}
+.nav-actions{display:flex;gap:6px;flex-wrap:wrap}
+.secondary{background:#292d3c}
+.green{background:#078d65}
+.hero{text-align:center;padding:18px 0}
+.rgb-frame{padding:3px;border-radius:16px;background:conic-gradient(from var(--angle),red,orange,yellow,lime,cyan,blue,violet,red);animation:rgbBorder 3s linear infinite,rgbGlow 2s ease-in-out infinite alternate;box-shadow:0 0 14px #ff174433;overflow:hidden}
+.rgb-frame img{display:block;width:100%;object-fit:cover;background:#11131b}
+.banner-frame{margin-bottom:22px}
+.banner-frame img{height:clamp(130px,25vw,250px);border-radius:13px}
+.cover-frame{width:clamp(155px,40vw,270px);aspect-ratio:1/1;margin:18px auto 10px;border-radius:50%}
+.cover-frame img{height:100%;aspect-ratio:1/1;border-radius:50%;object-fit:cover}
+.placeholder{display:grid;place-items:center;text-align:center;background:#121521;color:#aeb5c9;min-height:120px;border-radius:13px}
+.cover-frame .placeholder{height:100%;border-radius:50%;min-height:0}
+.hero h2{font-size:clamp(24px,5vw,40px);margin:18px 0 8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:15px 0}
+.stat,.box,.mail-item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px}
+.stat strong{display:block;font-size:20px;margin-top:5px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:15px;margin:15px 0 35px}
+.product{padding:3px;border-radius:15px;background:conic-gradient(from var(--angle),red,orange,yellow,lime,cyan,blue,violet,red);animation:rgbBorder 3s linear infinite;min-width:0}
+.product-inner{height:100%;background:#11131b;border-radius:12px;padding:12px;overflow:hidden}
+.product img{width:100%;height:145px;object-fit:cover;border-radius:9px;background:#080910}
+.product h3{overflow-wrap:anywhere}
+.price{color:#ff6681;font-size:20px;font-weight:bold}
+.tabs{display:flex;gap:7px;overflow-x:auto;padding:10px 0}
+.tab-btn{white-space:nowrap;background:#292d3c}
+.tab-btn.active{background:#d9163e}
+.list-item{background:#090b13;border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;overflow-wrap:anywhere}
+.inline{display:flex;gap:8px}
+.inline>*{flex:1;min-width:0}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+footer{text-align:center;color:#777f96;padding:30px 10px}
+#toast{position:fixed;z-index:100;bottom:20px;left:50%;transform:translateX(-50%);background:#222638;border:1px solid #41485e;border-radius:12px;padding:12px 17px;max-width:92%;text-align:center}
+.modal-bg{position:fixed;inset:0;background:#000c;z-index:80;display:flex;align-items:center;justify-content:center;padding:15px}
+.modal{width:min(440px,100%);background:#121521;border:1px solid #34394b;border-radius:16px;padding:20px}
+.countdown{text-align:center;font-size:38px;font-weight:bold;color:#ff6681}
+.wheel{width:230px;height:230px;max-width:70vw;max-height:70vw;margin:15px auto;border-radius:50%;border:6px solid #ff1744;background:conic-gradient(#ff1744 0 45deg,#222638 45deg 90deg,#ff9d00 90deg 135deg,#222638 135deg 180deg,#00b88a 180deg 225deg,#222638 225deg 270deg,#168bff 270deg 315deg,#222638 315deg);display:grid;place-items:center;box-shadow:0 0 25px #ff174455}
+.wheel span{background:#080910;padding:14px;border-radius:50%;font-weight:bold}
+
+/* หน้าปิดปรับปรุง */
+#maintenancePage{position:fixed;inset:0;z-index:70;background:#07080d;overflow:auto;padding:20px;display:flex;align-items:center;justify-content:center}
+.maintenance-card{width:min(550px,100%);padding:3px;border-radius:22px;background:conic-gradient(from var(--angle),red,orange,yellow,lime,cyan,blue,violet,red);animation:rgbBorder 3s linear infinite}
+.maintenance-inner{background:#10121b;border-radius:19px;padding:clamp(20px,5vw,38px);text-align:center}
+.maintenance-icon{font-size:55px;animation:rgbGlow 1.5s ease-in-out infinite alternate}
+.maintenance-inner h1{font-size:clamp(25px,6vw,38px)}
+.maintenance-message{color:#c2c8d9;white-space:pre-wrap;overflow-wrap:anywhere}
+.maintenance-timer{font-size:clamp(25px,7vw,42px);font-weight:900;margin:18px 0;background:linear-gradient(90deg,#ff1744,#ffae00,#00ffff,#b900ff,#ff1744);background-size:400%;color:transparent;background-clip:text;-webkit-background-clip:text;animation:rgbText 3s linear infinite}
+.bypass-box{text-align:left;margin-top:25px;border-top:1px solid #303548;padding-top:18px}
+.bypass-result{color:#48ffab;text-align:center;font-size:24px;font-weight:bold}
+@keyframes rgbText{to{background-position:400% 50%}}
+@property --angle{syntax:"<angle>";initial-value:0deg;inherits:false}
+@keyframes rgbBorder{to{--angle:360deg}}
+@keyframes rgbGlow{from{filter:brightness(1)}to{filter:brightness(1.18)}}
+@media(min-width:700px){.nav{min-height:65px}.stats{gap:14px}.stat{padding:18px}}
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+<div class="wrap nav">
+<h1 id="brandName" class="brand">PC ZONE PANEL</h1>
+<div class="nav-actions">
+<button class="secondary" onclick="showPage('shop')">หน้าร้าน</button>
+<button class="secondary" onclick="showPage('mail')">📬 จดหมาย <span id="mailCount">0</span></button>
+<button class="secondary" onclick="showPage('wheel')">🎡 วงล้อ</button>
+<button onclick="showAdminLogin()">หลังบ้าน</button>
+</div>
+</div>
+</header>
+
+<main class="wrap" id="mainContent">
+<section id="shopPage">
+<div class="hero">
+<div class="rgb-frame banner-frame">
+<img id="bannerDisplay" class="hidden" alt="แบนเนอร์ร้าน">
+<div id="bannerPlaceholder" class="placeholder">🌈 แบนเนอร์ PC ZONE PANEL</div>
+</div>
+<h2 id="heroTitle" class="brand">WELCOME TO PC ZONE PANEL</h2>
+<p id="heroDesc" class="muted">ร้านค้าดิจิทัล พร้อมระบบส่งสินค้าเข้าจดหมาย</p>
+<div class="rgb-frame cover-frame">
+<img id="coverDisplay" class="hidden" alt="ปกร้าน">
+<div id="coverPlaceholder" class="placeholder">👑<br>ปกร้าน</div>
+</div>
+</div>
+<div class="stats">
+<div class="stat"><span class="muted">เครดิตของคุณ</span><strong id="balance">100</strong></div>
+<div class="stat"><span class="muted">สินค้าในร้าน</span><strong id="productCount">0</strong></div>
+<div class="stat"><span class="muted">ซื้อทั้งหมด</span><strong id="purchaseTotal">0</strong></div>
+</div>
+<div class="box">
+<h3>🔑 เติมเครดิตด้วยคีย์</h3>
+<input id="redeemInput" placeholder="กรอกรหัสเติมเครดิต">
+<button onclick="redeemKey()">ยืนยันเติมเครดิต</button>
+</div>
+<div class="section-head"><h2>🛒 สินค้าทั้งหมด</h2><span class="muted">สินค้าจะถูกส่งเข้ากล่องจดหมาย</span></div>
+<div id="productGrid" class="products"></div>
+</section>
+
+<section id="mailPage" class="hidden"><h2>📬 กล่องจดหมาย</h2><div id="mailList"></div></section>
+<section id="wheelPage" class="hidden">
+<h2>🎡 วงล้อสุ่มรางวัล</h2>
+<div class="box"><p>สิทธิ์หมุนที่เหลือ: <strong id="spinsLeft">3</strong></p><div class="wheel"><span>PC ZONE</span></div><button style="width:100%" onclick="spinWheel()">หมุนวงล้อ</button></div>
+<h3>รางวัล</h3><div id="prizeDisplay"></div>
+</section>
+
+<section id="adminPage" class="hidden">
+<div class="section-head"><h2>⚙️ หลังบ้าน</h2><button class="secondary" onclick="logoutAdmin()">ออกจากระบบ</button></div>
+<div class="tabs">
+<button class="tab-btn active" onclick="adminTab('products',this)">สินค้า/สต๊อก</button>
+<button class="tab-btn" onclick="adminTab('auto',this)">สต๊อกออโต้</button>
+<button class="tab-btn" onclick="adminTab('maintenance',this)">ปิดปรับปรุง</button>
+<button class="tab-btn" onclick="adminTab('wheel',this)">วงล้อ</button>
+<button class="tab-btn" onclick="adminTab('keys',this)">สร้างคีย์</button>
+<button class="tab-btn" onclick="adminTab('design',this)">ตกแต่งเว็บ</button>
+<button class="tab-btn" onclick="adminTab('settings',this)">ตั้งค่า</button>
+<button class="tab-btn" onclick="adminTab('logs',this)">ประวัติ</button>
+</div>
+
+<div id="admin-products" class="admin-tab">
+<div class="box">
+<h3 id="productFormTitle">➕ เพิ่มสินค้า</h3>
+<input id="pName" placeholder="ชื่อสินค้า">
+<input id="pPrice" type="number" min="0" placeholder="ราคาเครดิต">
+<input id="pStock" type="number" min="0" placeholder="สต๊อกเริ่มต้น">
+<input id="pMaxStock" type="number" min="0" placeholder="สต๊อกสูงสุด (0 = ไม่จำกัด)">
+<input id="pImage" placeholder="URL รูปสินค้า">
+<textarea id="pDesc" placeholder="รายละเอียดสินค้า"></textarea>
+<input id="pLink" placeholder="ลิงก์สินค้าที่ส่งให้ลูกค้า">
+<textarea id="pKey" placeholder="คีย์สินค้าที่ส่งให้ลูกค้า (ไม่บังคับ)"></textarea>
+<button onclick="saveProduct()">บันทึกสินค้า</button><button class="secondary" onclick="clearProductForm()">ล้างฟอร์ม</button>
+</div>
+<h3>จัดการสินค้าและสต๊อก</h3><div id="adminProductList"></div>
+</div>
+
+<div id="admin-auto" class="admin-tab hidden">
+<div class="box">
+<h3>⏱️ ระบบเพิ่มสต๊อกตามเวลา</h3>
+<label><input id="autoTimeEnabled" type="checkbox">เปิดระบบเพิ่มสต๊อกตามเวลา</label>
+<label>ช่วงเวลา (วินาที)</label><input id="autoInterval" type="number" min="5" value="60">
+<label>จำนวนที่จะเพิ่มต่อรอบ</label><input id="autoAmount" type="number" min="1" value="10">
+<button onclick="saveAutoSettings()">บันทึกการตั้งเวลา</button>
+<p class="muted">ทำงานเฉพาะขณะที่หน้าเว็บนี้เปิดอยู่</p>
+</div>
+<div class="box">
+<h3>📦 คลังคีย์/ลิงก์สำหรับเติมสต๊อก</h3>
+<label><input id="autoPoolEnabled" type="checkbox">เปิดเติมสต๊อกจากคลังเมื่อสต๊อกหมด</label>
+<label>เลือกสินค้า</label><select id="poolProduct"></select>
+<label>คีย์สินค้า (หนึ่งรายการต่อบรรทัด)</label><textarea id="poolKeys" placeholder="KEY-001&#10;KEY-002"></textarea>
+<label>ลิงก์สินค้า (หนึ่งรายการต่อบรรทัด)</label><textarea id="poolLinks" placeholder="https://example.com/item1"></textarea>
+<button onclick="addPoolItems()">เพิ่มรายการเข้าคลัง</button><hr><div id="poolSummary"></div>
+</div>
+<div class="box">
+<h3>➕ เพิ่มสต๊อกด้วยตนเอง</h3>
+<label>เลือกสินค้า</label><select id="manualStockProduct"></select>
+<label>จำนวน</label><input id="manualStockAmount" type="number" min="1" value="10">
+<button onclick="manualAddStock()">เพิ่มสต๊อก</button>
+</div>
+</div>
+
+<div id="admin-maintenance" class="admin-tab hidden">
+<div class="box">
+<h3>🔧 ระบบปิดปรับปรุงเว็บไซต์</h3>
+<label><input type="checkbox" id="maintEnabled">เปิดโหมดปิดปรับปรุง</label>
+<label>ข้อความแสดงหน้าปิดปรับปรุง</label>
+<textarea id="maintMessage" placeholder="เว็บไซต์กำลังปรับปรุง กรุณากลับมาใหม่ภายหลัง"></textarea>
+<div class="inline">
+<div><label>ระยะเวลา</label><input id="maintDuration" type="number" min="1" value="30"></div>
+<div><label>หน่วยเวลา</label><select id="maintUnit"><option value="seconds">วินาที</option><option value="minutes">นาที</option><option value="hours">ชั่วโมง</option><option value="days">วัน</option><option value="years">ปี</option></select></div>
+</div>
+<label>รหัสบายพาสแอดมิน</label><input id="maintPassword" type="password" placeholder="ตั้งรหัสสำหรับผ่านหน้าปิดปรับปรุง">
+<button onclick="saveMaintenance()">บันทึก/เริ่มปิดปรับปรุง</button>
+<button class="secondary" onclick="turnOffMaintenance()">ปิดโหมดปรับปรุง</button>
+<p class="muted">เมื่อเปิดโหมด หน้าร้านในเบราว์เซอร์นี้จะแสดงหน้าปิดปรับปรุง ส่วนแอดมินสามารถกรอกรหัสบายพาสเพื่อเข้าหน้าร้านชั่วคราวได้</p>
+</div>
+<div class="box"><h3>สถานะปัจจุบัน</h3><p id="maintStatus"></p></div>
+</div>
+
+<div id="admin-wheel" class="admin-tab hidden">
+<div class="box"><h3>ตั้งค่าวงล้อ</h3><label>จำนวนครั้งต่อวัน</label><input id="spinLimit" type="number" min="0"><button onclick="saveSpinLimit()">บันทึกจำนวนครั้ง</button></div>
+<div class="box"><h3 id="prizeFormTitle">เพิ่มรางวัล</h3><input id="prizeName" placeholder="ชื่อรางวัล"><input id="prizeCredit" type="number" min="0" placeholder="เครดิตรางวัล"><input id="prizeChance" type="number" min="0" max="100" step=".1" placeholder="โอกาส %"><button onclick="savePrize()">บันทึกรางวัล</button><button class="secondary" onclick="clearPrizeForm()">ล้างฟอร์ม</button></div>
+<div id="adminPrizeList"></div>
+</div>
+
+<div id="admin-keys" class="admin-tab hidden">
+<div class="box"><h3>🔑 สร้างคีย์เติมเครดิต</h3><label>เครดิตต่อคีย์</label><input id="keyValue" type="number" min="1" value="100"><label>จำนวนคีย์</label><input id="keyAmount" type="number" min="1" max="500" value="5"><button onclick="generateKeys()">สร้างคีย์</button><button class="secondary" onclick="copyAllKeys()">คัดลอกคีย์ทั้งหมด</button><div id="generatedKeys"></div></div>
+</div>
+
+<div id="admin-design" class="admin-tab hidden">
+<div class="box"><h3>🎨 ตั้งค่าหน้าร้าน</h3><label>ชื่อเว็บไซต์</label><input id="dName"><label>ข้อความหัวเว็บ</label><input id="dHero"><label>คำอธิบาย</label><textarea id="dDesc"></textarea><label>URL แบนเนอร์ (ด้านบน)</label><input id="dBanner" placeholder="https://example.com/banner.jpg"><label>URL ปกร้าน (วงกลม)</label><input id="dCover" placeholder="https://example.com/cover.jpg"><button onclick="saveDesign()">บันทึกหน้าร้าน</button></div>
+</div>
+
+<div id="admin-settings" class="admin-tab hidden">
+<div class="box"><h3>🔐 เปลี่ยนรหัสแอดมิน</h3><input id="oldPassword" type="password" placeholder="รหัสเดิม"><input id="newPassword" type="password" placeholder="รหัสใหม่"><button onclick="changePassword()">เปลี่ยนรหัส</button></div>
+<div class="box"><button class="secondary" onclick="toggleSound()">เปิด/ปิดเสียงปุ่ม</button><p id="soundState" class="muted"></p><button class="secondary" onclick="exportData()">สำรองข้อมูล JSON</button></div>
+</div>
+<div id="admin-logs" class="admin-tab hidden"><button class="secondary" onclick="clearLogs()">ล้างประวัติ</button><div id="logList"></div></div>
+</section>
+</main>
+
+<section id="maintenancePage" class="hidden">
+<div class="maintenance-card"><div class="maintenance-inner">
+<div class="maintenance-icon">🔧</div>
+<h1 class="brand" id="maintTitle">เว็บไซต์กำลังปิดปรับปรุง</h1>
+<p class="maintenance-message" id="maintPublicMessage">เว็บไซต์กำลังปรับปรุง กรุณากลับมาใหม่ภายหลัง</p>
+<div class="maintenance-timer" id="maintCountdown">กำลังเตรียมระบบ...</div>
+<p class="muted">ขออภัยในความไม่สะดวก</p>
+<div class="bypass-box">
+<h3>🔐 สำหรับผู้ดูแลระบบ</h3>
+<input id="bypassInput" type="password" placeholder="กรอกรหัสบายพาส">
+<button style="width:100%" onclick="bypassMaintenance()">ยืนยันเพื่อเข้าเว็บไซต์</button>
+<div id="bypassResult" class="bypass-result"></div>
+<p class="muted">การบายพาสนี้ใช้กับเบราว์เซอร์ปัจจุบันเท่านั้น</p>
+</div>
+</div></div>
+</section>
+
+<footer id="siteFooter">PC ZONE PANEL · Digital Store</footer>
+<div id="toast" class="hidden"></div>
+
+<div id="modalBg" class="modal-bg hidden">
+<div class="modal"><h2 id="modalTitle">ยืนยันคำสั่งซื้อ</h2><p id="modalText"></p><div id="countdown" class="countdown hidden">5</div><button id="modalConfirm" onclick="confirmPurchase()">ยืนยันการซื้อ</button><button class="secondary" onclick="closeModal()">ยกเลิก</button></div>
+</div>
+<div id="loginBg" class="modal-bg hidden">
+<div class="modal"><h2>เข้าสู่ระบบแอดมิน</h2><input id="adminPasswordInput" type="password" placeholder="รหัสผ่านแอดมิน"><button onclick="loginAdmin()">เข้าสู่ระบบ</button><button class="secondary" onclick="hideAdminLogin()">ยกเลิก</button><p class="muted">รหัสเริ่มต้น: admin123 — ควรเปลี่ยนหลังเข้าสู่ระบบ</p></div>
+</div>
+
+<script>
+const DB_KEY="pczone_panel_maintenance_v8";
+const defaults={
+ name:"PC ZONE PANEL",hero:"WELCOME TO PC ZONE PANEL",desc:"ร้านค้าดิจิทัล พร้อมระบบส่งสินค้าเข้าจดหมาย",
+ banner:"",cover:"",adminPassword:"admin123",balance:100,purchases:0,sound:true,
+ spinLimit:3,spinDate:"",spinsUsed:0,products:[],
+ prizes:[{id:"r1",name:"10 เครดิต",credit:10,chance:50},{id:"r2",name:"25 เครดิต",credit:25,chance:30},{id:"r3",name:"50 เครดิต",credit:50,chance:15},{id:"r4",name:"100 เครดิต",credit:100,chance:5}],
+ keys:[],mailbox:[],logs:[],autoTimeEnabled:false,autoInterval:60,autoAmount:10,autoPoolEnabled:false,pool:[],
+ maintenance:{enabled:false,message:"เว็บไซต์กำลังปรับปรุง กรุณากลับมาใหม่ภายหลัง",endAt:0,bypassPassword:"",bypassUntil:0}
+};
+let db=loadDB(),editingProduct=null,editingPrize=null,pendingProduct=null,purchaseTimer=null,generatedKeyCache=[],toastTimer=null,stockTimer=null,maintTimer=null;
+function clone(x){return JSON.parse(JSON.stringify(x))}
+function loadDB(){try{const s=JSON.parse(localStorage.getItem(DB_KEY));return s?{...clone(defaults),...s,maintenance:{...clone(defaults.maintenance),...(s.maintenance||{})}}:clone(defaults)}catch(e){return clone(defaults)}}
+function saveDB(){localStorage.setItem(DB_KEY,JSON.stringify(db));renderAll()}
+function uid(){return "pz_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,9)}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function safeURL(v){try{const u=new URL(String(v||""));return ["https:","http:"].includes(u.protocol)?u.href:""}catch(e){return ""}}
+function fmt(v){return Number(v||0).toLocaleString("th-TH")}
+function toast(s){const el=document.getElementById("toast");el.textContent=s;el.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.add("hidden"),2600)}
+function sound(){if(!db.sound)return;try{const C=window.AudioContext||window.webkitAudioContext,ctx=new C(),o=ctx.createOscillator(),g=ctx.createGain();o.frequency.value=620;g.gain.value=.03;o.connect(g);g.connect(ctx.destination);o.start();o.stop(ctx.currentTime+.06);o.onended=()=>ctx.close()}catch(e){}}
+document.addEventListener("click",e=>{if(e.target.closest("button"))sound()});
+
+function showPage(page){
+ if(db.maintenance.enabled&&Date.now()<db.maintenance.endAt&&Date.now()>db.maintenance.bypassUntil&&page!=="admin"){showMaintenance();return}
+ ["shop","mail","wheel","admin"].forEach(x=>document.getElementById(x+"Page").classList.toggle("hidden",x!==page));
+ document.getElementById("maintenancePage").classList.add("hidden");
+ if(page==="mail")renderMailbox();if(page==="wheel")renderPrizes();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderImages(){
+ const b=safeURL(db.banner),c=safeURL(db.cover),bi=document.getElementById("bannerDisplay"),ci=document.getElementById("coverDisplay");
+ bi.classList.toggle("hidden",!b);ci.classList.toggle("hidden",!c);
+ document.getElementById("bannerPlaceholder").classList.toggle("hidden",!!b);document.getElementById("coverPlaceholder").classList.toggle("hidden",!!c);
+ bi.src=b;ci.src=c;
+ bi.onerror=()=>{bi.classList.add("hidden");document.getElementById("bannerPlaceholder").classList.remove("hidden")};
+ ci.onerror=()=>{ci.classList.add("hidden");document.getElementById("coverPlaceholder").classList.remove("hidden")};
+}
+function renderProducts(){
+ document.getElementById("balance").textContent=fmt(db.balance);document.getElementById("productCount").textContent=db.products.length;document.getElementById("purchaseTotal").textContent=fmt(db.purchases);
+ const el=document.getElementById("productGrid");
+ el.innerHTML=db.products.length?db.products.map(p=>{const img=safeURL(p.image);return `<article class="product"><div class="product-inner">${img?`<img src="${esc(img)}" alt="" onerror="this.style.display='none'">`:""}<h3>${esc(p.name)}</h3><p class="muted">${esc(p.desc||"ไม่มีรายละเอียด")}</p><p class="price">${fmt(p.price)} เครดิต</p><p class="muted">คงเหลือ ${fmt(p.stock)}</p><button style="width:100%" onclick="startPurchase('${p.id}')" ${p.stock<=0?"disabled":""}>${p.stock>0?"ซื้อสินค้า":"สินค้าหมด"}</button></div></article>`}).join(""):'<div class="box">ยังไม่มีสินค้า กรุณาเพิ่มจากหลังบ้าน</div>';
+}
+function renderMailbox(){
+ document.getElementById("mailCount").textContent=db.mailbox.length;const el=document.getElementById("mailList");
+ el.innerHTML=db.mailbox.length?[...db.mailbox].reverse().map(m=>`<div class="mail-item"><h3>📦 ${esc(m.name)}</h3><p class="muted">${esc(m.time)}</p>${m.link?`<p><a target="_blank" rel="noopener" style="color:#6bcaff" href="${esc(safeURL(m.link))}">เปิดลิงก์สินค้า</a></p><button class="secondary" onclick="copyValue('${m.id}','link')">คัดลอกลิงก์</button>`:""}${m.key?`<p>คีย์สินค้า:</p><textarea readonly>${esc(m.key)}</textarea><button class="secondary" onclick="copyValue('${m.id}','key')">คัดลอกคีย์</button>`:""}</div>`).join(""):'<div class="box">ยังไม่มีจดหมาย</div>';
+}
+async function copyText(v){try{await navigator.clipboard.writeText(v);toast("คัดลอกแล้ว")}catch(e){const t=document.createElement("textarea");t.value=v;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();toast("คัดลอกแล้ว")}}
+function copyValue(id,f){const m=db.mailbox.find(x=>x.id===id);if(m)copyText(m[f]||"")}
+function startPurchase(id){
+ if(isMaintenanceActive()&&Date.now()>db.maintenance.bypassUntil){showMaintenance();return}
+ const p=db.products.find(x=>x.id===id);if(!p)return;if(p.stock<=0)return toast("สินค้าหมด");if(db.balance<p.price)return toast("เครดิตไม่เพียงพอ");
+ pendingProduct=id;document.getElementById("modalTitle").textContent="ยืนยันคำสั่งซื้อ";document.getElementById("modalText").textContent=`ซื้อ ${p.name} ราคา ${fmt(p.price)} เครดิต?`;
+ document.getElementById("countdown").classList.add("hidden");document.getElementById("modalConfirm").classList.remove("hidden");document.getElementById("modalConfirm").textContent="ยืนยันการซื้อ";document.getElementById("modalBg").classList.remove("hidden");
+}
+function closeModal(){clearInterval(purchaseTimer);document.getElementById("modalBg").classList.add("hidden");pendingProduct=null}
+function confirmPurchase(){
+ if(!pendingProduct)return;const p=db.products.find(x=>x.id===pendingProduct);if(!p||p.stock<=0||db.balance<p.price){closeModal();return toast("สต๊อกหรือเครดิตไม่เพียงพอ")}
+ let n=5;const c=document.getElementById("countdown"),b=document.getElementById("modalConfirm");b.classList.add("hidden");c.classList.remove("hidden");c.textContent=n;clearInterval(purchaseTimer);
+ purchaseTimer=setInterval(()=>{n--;c.textContent=n>0?n:"✓";if(n<=0){clearInterval(purchaseTimer);completePurchase(p.id)}},1000);
+}
+function completePurchase(id){
+ const p=db.products.find(x=>x.id===id);if(!p||p.stock<=0||db.balance<p.price){closeModal();return}
+ db.balance-=Number(p.price);p.stock--;db.purchases++;let key=p.key||"",link=safeURL(p.link);
+ const pool=db.pool.find(x=>x.productId===p.id&&x.items.length);if(pool){const item=pool.items.shift();if(item.key)key=item.key;if(item.link)link=safeURL(item.link)||link}
+ const time=new Date().toLocaleString("th-TH");db.mailbox.push({id:uid(),name:p.name,key,link,time});db.logs.push({time,action:"ซื้อสินค้า",detail:p.name});saveDB();
+ document.getElementById("modalTitle").textContent="✓ ซื้อสำเร็จ";document.getElementById("modalText").textContent="สินค้าเข้ากล่องจดหมายแล้ว";document.getElementById("countdown").classList.remove("hidden");document.getElementById("countdown").textContent="✓";document.getElementById("modalConfirm").classList.add("hidden");pendingProduct=null;
+ setTimeout(()=>{document.getElementById("modalBg").classList.add("hidden");document.getElementById("modalConfirm").classList.remove("hidden");document.getElementById("countdown").classList.add("hidden");showPage("mail")},1000);toast("ซื้อสำเร็จ");
+}
+function redeemKey(){const v=document.getElementById("redeemInput").value.trim(),k=db.keys.find(x=>x.key===v&&!x.used);if(!k)return toast("คีย์ไม่ถูกต้องหรือถูกใช้แล้ว");k.used=true;k.usedAt=new Date().toLocaleString("th-TH");db.balance+=Number(k.value);db.logs.push({time:k.usedAt,action:"เติมเครดิต",detail:fmt(k.value)+" เครดิต"});document.getElementById("redeemInput").value="";saveDB();toast("เติมเครดิตสำเร็จ")}
+function renderPrizes(){
+ const today=new Date().toLocaleDateString("en-CA");if(db.spinDate!==today){db.spinDate=today;db.spinsUsed=0}
+ document.getElementById("spinsLeft").textContent=Math.max(0,db.spinLimit-db.spinsUsed);
+ document.getElementById("prizeDisplay").innerHTML=db.prizes.filter(p=>p.chance>0).map(p=>`<div class="box"><b>${esc(p.name)}</b><p class="muted">โอกาส ${p.chance}% · ${fmt(p.credit)} เครดิต</p></div>`).join("")||'<div class="box">ยังไม่มีรางวัล</div>';
+}
+function spinWheel(){
+ if(isMaintenanceActive()&&Date.now()>db.maintenance.bypassUntil)return showMaintenance();
+ const today=new Date().toLocaleDateString("en-CA");if(db.spinDate!==today){db.spinDate=today;db.spinsUsed=0}
+ if(db.spinsUsed>=db.spinLimit)return toast("ใช้สิทธิ์วันนี้หมดแล้ว");
+ const arr=db.prizes.filter(p=>Number(p.chance)>0),total=arr.reduce((s,p)=>s+Number(p.chance),0);if(!arr.length||total<=0)return toast("ยังไม่มีรางวัล");
+ db.spinsUsed++;let r=Math.random()*total,win=arr[arr.length-1];for(const p of arr){r-=Number(p.chance);if(r<0){win=p;break}}
+ db.balance+=Number(win.credit||0);db.logs.push({time:new Date().toLocaleString("th-TH"),action:"หมุนวงล้อ",detail:win.name});saveDB();toast("ยินดีด้วย! "+win.name);
+}
+function showAdminLogin(){document.getElementById("loginBg").classList.remove("hidden")}
+function hideAdminLogin(){document.getElementById("loginBg").classList.add("hidden")}
+function loginAdmin(){if(document.getElementById("adminPasswordInput").value!==db.adminPassword)return toast("รหัสผ่านไม่ถูกต้อง");hideAdminLogin();document.getElementById("adminPasswordInput").value="";showPage("admin");adminTab("products",document.querySelector(".tab-btn"))}
+function logoutAdmin(){showPage("shop")}
+function adminTab(name,btn){
+ document.querySelectorAll(".admin-tab").forEach(x=>x.classList.add("hidden"));document.getElementById("admin-"+name).classList.remove("hidden");document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");
+ if(name==="auto")renderPoolSettings();if(name==="maintenance")renderMaintenanceSettings();
+}
+function clearProductForm(){editingProduct=null;["pName","pPrice","pStock","pMaxStock","pImage","pDesc","pLink","pKey"].forEach(id=>document.getElementById(id).value="");document.getElementById("productFormTitle").textContent="➕ เพิ่มสินค้า"}
+function saveProduct(){
+ const name=document.getElementById("pName").value.trim(),price=Number(document.getElementById("pPrice").value),stock=Number(document.getElementById("pStock").value),max=Number(document.getElementById("pMaxStock").value||0);
+ if(!name||!Number.isFinite(price)||price<0||!Number.isInteger(stock)||stock<0||!Number.isInteger(max)||max<0)return toast("ตรวจสอบชื่อ ราคา และสต๊อก");
+ const d={name,price,stock,maxStock:max,image:safeURL(document.getElementById("pImage").value),desc:document.getElementById("pDesc").value.trim(),link:safeURL(document.getElementById("pLink").value),key:document.getElementById("pKey").value.trim()};
+ if(editingProduct){const p=db.products.find(x=>x.id===editingProduct);if(p)Object.assign(p,d)}else db.products.push({id:uid(),...d});
+ db.logs.push({time:new Date().toLocaleString("th-TH"),action:editingProduct?"แก้ไขสินค้า":"เพิ่มสินค้า",detail:name});clearProductForm();saveDB();toast("บันทึกสินค้าแล้ว");
+}
+function editProduct(id){const p=db.products.find(x=>x.id===id);if(!p)return;editingProduct=id;document.getElementById("productFormTitle").textContent="แก้ไขสินค้า";document.getElementById("pName").value=p.name;document.getElementById("pPrice").value=p.price;document.getElementById("pStock").value=p.stock;document.getElementById("pMaxStock").value=p.maxStock||0;document.getElementById("pImage").value=p.image||"";document.getElementById("pDesc").value=p.desc||"";document.getElementById("pLink").value=p.link||"";document.getElementById("pKey").value=p.key||"";window.scrollTo({top:0,behavior:"smooth"})}
+function deleteProduct(id){if(!confirm("ลบสินค้านี้?"))return;db.products=db.products.filter(p=>p.id!==id);db.pool=db.pool.filter(p=>p.productId!==id);saveDB()}
+function renderAdminProducts(){const el=document.getElementById("adminProductList");if(!el)return;el.innerHTML=db.products.map(p=>`<div class="list-item"><b>${esc(p.name)}</b><p class="muted">ราคา ${fmt(p.price)} · สต๊อก ${fmt(p.stock)} · สูงสุด ${p.maxStock?fmt(p.maxStock):"ไม่จำกัด"}</p><div class="inline"><button class="secondary" onclick="editProduct('${p.id}')">แก้ไข</button><button onclick="deleteProduct('${p.id}')">ลบ</button></div><hr><div class="inline"><input id="add_${p.id}" type="number" min="1" value="10"><button class="green" onclick="addStock('${p.id}')">เพิ่มสต๊อก</button></div></div>`).join("")||'<p class="muted">ยังไม่มีสินค้า</p>'}
+function addStock(id,amount){const p=db.products.find(x=>x.id===id);if(!p)return;const n=Number(amount??document.getElementById("add_"+id)?.value);if(!Number.isInteger(n)||n<1)return toast("จำนวนสต๊อกไม่ถูกต้อง");const next=p.stock+n;if(p.maxStock>0&&next>p.maxStock)return toast("จำนวนเกินสต๊อกสูงสุด");p.stock=next;db.logs.push({time:new Date().toLocaleString("th-TH"),action:"เพิ่มสต๊อก",detail:p.name+" +"+n});saveDB();toast("เพิ่มสต๊อกแล้ว")}
+function manualAddStock(){const id=document.getElementById("manualStockProduct").value,n=Number(document.getElementById("manualStockAmount").value);if(!id)return toast("เลือกสินค้าก่อน");addStock(id,n)}
+function renderPoolSettings(){
+ const options=db.products.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("")||'<option value="">ยังไม่มีสินค้า</option>';
+ document.getElementById("poolProduct").innerHTML=options;document.getElementById("manualStockProduct").innerHTML=options;
+ document.getElementById("autoTimeEnabled").checked=!!db.autoTimeEnabled;document.getElementById("autoInterval").value=db.autoInterval;document.getElementById("autoAmount").value=db.autoAmount;document.getElementById("autoPoolEnabled").checked=!!db.autoPoolEnabled;
+ document.getElementById("poolSummary").innerHTML=db.pool.map(p=>`<div class="list-item"><b>${esc(db.products.find(x=>x.id===p.productId)?.name||"สินค้าที่ถูกลบ")}</b><p class="muted">รายการในคลัง: ${p.items.length}</p><button class="secondary" onclick="clearPool('${p.productId}')">ล้างคลัง</button></div>`).join("")||'<p class="muted">ยังไม่มีรายการคลัง</p>';
+}
+function saveAutoSettings(){const interval=Number(document.getElementById("autoInterval").value),amount=Number(document.getElementById("autoAmount").value);if(!Number.isInteger(interval)||interval<5||!Number.isInteger(amount)||amount<1)return toast("เวลาอย่างน้อย 5 วินาทีและจำนวนต้องมากกว่า 0");db.autoTimeEnabled=document.getElementById("autoTimeEnabled").checked;db.autoInterval=interval;db.autoAmount=amount;db.autoPoolEnabled=document.getElementById("autoPoolEnabled").checked;saveDB();startStockTimer();toast("บันทึกระบบสต๊อกแล้ว")}
+function addPoolItems(){const id=document.getElementById("poolProduct").value;if(!id)return toast("เลือกสินค้าก่อน");const keys=document.getElementById("poolKeys").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),links=document.getElementById("poolLinks").value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean),n=Math.max(keys.length,links.length);if(!n)return toast("ใส่คีย์หรือลิงก์อย่างน้อยหนึ่งรายการ");let pool=db.pool.find(x=>x.productId===id);if(!pool){pool={productId:id,items:[]};db.pool.push(pool)}for(let i=0;i<n;i++){const key=keys[i]||"",link=safeURL(links[i]||"");if(key||link)pool.items.push({key,link})}document.getElementById("poolKeys").value="";document.getElementById("poolLinks").value="";saveDB();renderPoolSettings();toast("เพิ่มรายการเข้าคลังแล้ว")}
+function clearPool(id){if(!confirm("ล้างรายการในคลังนี้?"))return;const p=db.pool.find(x=>x.productId===id);if(p)p.items=[];saveDB();renderPoolSettings()}
+function autoRestock(){
+ if(db.autoTimeEnabled){for(const p of db.products){const max=Number(p.maxStock||0);if(max>0&&p.stock>=max)continue;p.stock=max>0?Math.min(max,p.stock+Number(db.autoAmount||0)):p.stock+Number(db.autoAmount||0)}}
+ if(db.autoPoolEnabled){for(const pool of db.pool){const p=db.products.find(x=>x.id===pool.productId);if(!p||p.stock>0||!pool.items.length)continue;const max=Number(p.maxStock||0),n=max>0?Math.min(pool.items.length,max):pool.items.length;p.stock+=n}}
+ saveDB();
+}
+function startStockTimer(){clearInterval(stockTimer);if(db.autoTimeEnabled)stockTimer=setInterval(()=>{autoRestock();db.logs.push({time:new Date().toLocaleString("th-TH"),action:"เพิ่มสต๊อกตามเวลา",detail:"ดำเนินการอัตโนมัติ"});saveDB()},Math.max(5,Number(db.autoInterval)||60)*1000)}
+
+function saveSpinLimit(){const n=Number(document.getElementById("spinLimit").value);if(!Number.isInteger(n)||n<0||n>10000)return toast("จำนวนไม่ถูกต้อง");db.spinLimit=n;saveDB()}
+function clearPrizeForm(){editingPrize=null;["prizeName","prizeCredit","prizeChance"].forEach(id=>document.getElementById(id).value="");document.getElementById("prizeFormTitle").textContent="เพิ่มรางวัล"}
+function savePrize(){const name=document.getElementById("prizeName").value.trim(),credit=Number(document.getElementById("prizeCredit").value),chance=Number(document.getElementById("prizeChance").value);if(!name||!Number.isFinite(credit)||credit<0||!Number.isFinite(chance)||chance<0||chance>100)return toast("ตรวจสอบข้อมูลรางวัล");if(editingPrize){const p=db.prizes.find(x=>x.id===editingPrize);if(p)Object.assign(p,{name,credit,chance})}else db.prizes.push({id:uid(),name,credit,chance});clearPrizeForm();saveDB()}
+function editPrize(id){const p=db.prizes.find(x=>x.id===id);if(!p)return;editingPrize=id;document.getElementById("prizeName").value=p.name;document.getElementById("prizeCredit").value=p.credit;document.getElementById("prizeChance").value=p.chance;document.getElementById("prizeFormTitle").textContent="แก้ไขรางวัล"}
+function deletePrize(id){if(confirm("ลบรางวัลนี้?")){db.prizes=db.prizes.filter(x=>x.id!==id);saveDB()}}
+function renderAdminPrizes(){document.getElementById("spinLimit").value=db.spinLimit;document.getElementById("adminPrizeList").innerHTML=db.prizes.map(p=>`<div class="list-item"><b>${esc(p.name)}</b><p class="muted">${fmt(p.credit)} เครดิต · ${p.chance}%</p><div class="inline"><button class="secondary" onclick="editPrize('${p.id}')">แก้ไข</button><button onclick="deletePrize('${p.id}')">ลบ</button></div></div>`).join("")}
+function generateKeys(){const value=Number(document.getElementById("keyValue").value),amount=Number(document.getElementById("keyAmount").value);if(!Number.isInteger(value)||value<1||!Number.isInteger(amount)||amount<1||amount>500)return toast("ตรวจสอบจำนวนคีย์และเครดิต");generatedKeyCache=[];for(let i=0;i<amount;i++){const key="PZ-"+randomHex();db.keys.push({key,value,used:false});generatedKeyCache.push(key)}saveDB();document.getElementById("generatedKeys").innerHTML=generatedKeyCache.map(k=>`<div class="list-item"><code>${k}</code><button class="secondary" onclick="copyText('${k}')">คัดลอก</button></div>`).join("")}
+function randomHex(){const a=new Uint8Array(8);if(window.crypto&&crypto.getRandomValues)crypto.getRandomValues(a);else for(let i=0;i<a.length;i++)a[i]=Math.random()*256;return [...a].map(x=>Math.floor(x).toString(16).padStart(2,"0")).join("").toUpperCase()}
+function copyAllKeys(){copyText(generatedKeyCache.join("\n"))}
+function saveDesign(){const name=document.getElementById("dName").value.trim(),hero=document.getElementById("dHero").value.trim(),desc=document.getElementById("dDesc").value.trim(),banner=document.getElementById("dBanner").value.trim(),cover=document.getElementById("dCover").value.trim();if(!name)return toast("กรุณาใส่ชื่อเว็บ");if(banner&&!safeURL(banner))return toast("URL แบนเนอร์ไม่ถูกต้อง");if(cover&&!safeURL(cover))return toast("URL ปกไม่ถูกต้อง");Object.assign(db,{name,hero:hero||name,desc,banner:safeURL(banner),cover:safeURL(cover)});saveDB();toast("บันทึกหน้าร้านแล้ว")}
+function changePassword(){if(document.getElementById("oldPassword").value!==db.adminPassword)return toast("รหัสเดิมไม่ถูกต้อง");const n=document.getElementById("newPassword").value;if(n.length<6)return toast("รหัสใหม่ต้องยาวอย่างน้อย 6 ตัว");db.adminPassword=n;saveDB();document.getElementById("oldPassword").value="";document.getElementById("newPassword").value="";toast("เปลี่ยนรหัสแล้ว")}
+function toggleSound(){db.sound=!db.sound;saveDB()}
+function renderLogs(){document.getElementById("logList").innerHTML=[...db.logs].reverse().map(l=>`<div class="list-item"><b>${esc(l.action)}</b><p>${esc(l.detail)}</p><p class="muted">${esc(l.time)}</p></div>`).join("")||'<p class="muted">ไม่มีประวัติ</p>'}
+function clearLogs(){if(confirm("ล้างประวัติทั้งหมด?")){db.logs=[];saveDB()}}
+function exportData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="pc-zone-backup.json";a.click();URL.revokeObjectURL(url)}
+
+/* ระบบปิดปรับปรุง */
+function isMaintenanceActive(){return !!db.maintenance.enabled&&Date.now()<Number(db.maintenance.endAt||0)}
+function durationMs(n,unit){const factor={seconds:1000,minutes:60000,hours:3600000,days:86400000,years:31536000000};return n*(factor[unit]||1000)}
+function saveMaintenance(){
+ const enabled=document.getElementById("maintEnabled").checked;
+ const message=document.getElementById("maintMessage").value.trim()||"เว็บไซต์กำลังปรับปรุง กรุณากลับมาใหม่ภายหลัง";
+ const duration=Number(document.getElementById("maintDuration").value);
+ const unit=document.getElementById("maintUnit").value;
+ const password=document.getElementById("maintPassword").value.trim();
+ if(enabled&&(!Number.isFinite(duration)||duration<=0))return toast("กรุณาตั้งระยะเวลาให้ถูกต้อง");
+ if(enabled&&password.length<6)return toast("รหัสบายพาสต้องมีอย่างน้อย 6 ตัวอักษร");
+ db.maintenance.message=message;
+ if(password)db.maintenance.bypassPassword=password;
+ if(enabled){
+  db.maintenance.enabled=true;
+  db.maintenance.endAt=Date.now()+durationMs(duration,unit);
+  db.maintenance.bypassUntil=0;
+  db.logs.push({time:new Date().toLocaleString("th-TH"),action:"เปิดปิดปรับปรุง",detail:message});
+ }else{
+  db.maintenance.enabled=false;db.maintenance.endAt=0;db.maintenance.bypassUntil=0;
+ }
+ saveDB();renderMaintenanceSettings();refreshMaintenanceView();toast(enabled?"เปิดโหมดปิดปรับปรุงแล้ว":"บันทึกการตั้งค่าแล้ว");
+}
+function turnOffMaintenance(){
+ db.maintenance.enabled=false;db.maintenance.endAt=0;db.maintenance.bypassUntil=0;
+ db.logs.push({time:new Date().toLocaleString("th-TH"),action:"ปิดโหมดปรับปรุง",detail:"แอดมินปิดโหมดปรับปรุง"});
+ saveDB();renderMaintenanceSettings();refreshMaintenanceView();toast("ปิดโหมดปรับปรุงแล้ว");
+}
+function renderMaintenanceSettings(){
+ const m=db.maintenance;
+ document.getElementById("maintEnabled").checked=!!m.enabled;
+ document.getElementById("maintMessage").value=m.message||"";
+ document.getElementById("maintStatus").textContent=isMaintenanceActive()?"กำลังปิดปรับปรุง · สิ้นสุด "+new Date(m.endAt).toLocaleString("th-TH"):(m.enabled?"หมดเวลาปรับปรุงแล้ว":"ปิดโหมดปรับปรุงอยู่");
+}
+function showMaintenance(){
+ document.getElementById("siteHeader").classList.add("hidden");
+ document.getElementById("mainContent").classList.add("hidden");
+ document.getElementById("siteFooter").classList.add("hidden");
+ document.getElementById("maintenancePage").classList.remove("hidden");
+ document.getElementById("maintPublicMessage").textContent=db.maintenance.message||"เว็บไซต์กำลังปรับปรุง กรุณากลับมาใหม่ภายหลัง";
+ updateMaintenanceCountdown();
+ clearInterval(maintTimer);
+ maintTimer=setInterval(updateMaintenanceCountdown,1000);
+}
+function hideMaintenance(){
+ clearInterval(maintTimer);
+ document.getElementById("maintenancePage").classList.add("hidden");
+ document.getElementById("siteHeader").classList.remove("hidden");
+ document.getElementById("mainContent").classList.remove("hidden");
+ document.getElementById("siteFooter").classList.remove("hidden");
+}
+function updateMaintenanceCountdown(){
+ const el=document.getElementById("maintCountdown");
+ const remaining=Number(db.maintenance.endAt||0)-Date.now();
+ if(remaining<=0){
+  db.maintenance.enabled=false;db.maintenance.endAt=0;saveDB();hideMaintenance();el.textContent="เสร็จสิ้นแล้ว";showPage("shop");return;
+ }
+ let s=Math.floor(remaining/1000),d=Math.floor(s/86400);s%=86400;
+ const h=Math.floor(s/3600);s%=3600;const m=Math.floor(s/60);s%=60;
+ el.textContent=(d?d+" วัน ":"")+(h?String(h).padStart(2,"0")+":":"")+String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");
+}
+function bypassMaintenance(){
+ const entered=document.getElementById("bypassInput").value;
+ if(!db.maintenance.bypassPassword||entered!==db.maintenance.bypassPassword){toast("รหัสบายพาสไม่ถูกต้อง");return}
+ const result=document.getElementById("bypassResult");let n=5;
+ result.textContent="✓ ยืนยันสำเร็จ "+n;
+ const btn=document.querySelector("#maintenancePage .bypass-box button");btn.disabled=true;
+ const timer=setInterval(()=>{
+  n--;result.textContent=n>0?"✓ เข้าเว็บไซต์ใน "+n+" วินาที":"✓";
+  if(n<=0){
+   clearInterval(timer);btn.disabled=false;document.getElementById("bypassInput").value="";
+   db.maintenance.bypassUntil=Date.now()+30*60*1000;saveDB();hideMaintenance();showPage("shop");toast("บายพาสสำเร็จ เข้าเว็บได้ 30 นาที");
+  }
+ },1000);
+}
+function refreshMaintenanceView(){
+ if(isMaintenanceActive()&&Date.now()>db.maintenance.bypassUntil)showMaintenance();
+ else{hideMaintenance();showPage("shop")}
+}
+function renderAll(){
+ document.title=db.name;document.getElementById("brandName").textContent=db.name;document.getElementById("heroTitle").textContent=db.hero;document.getElementById("heroDesc").textContent=db.desc;
+ renderImages();renderProducts();renderMailbox();renderPrizes();renderAdminProducts();renderAdminPrizes();
+ document.getElementById("soundState").textContent=db.sound?"เสียงปุ่ม: เปิด":"เสียงปุ่ม: ปิด";
+ document.getElementById("dName").value=db.name;document.getElementById("dHero").value=db.hero;document.getElementById("dDesc").value=db.desc;document.getElementById("dBanner").value=db.banner;document.getElementById("dCover").value=db.cover;
+ renderPoolSettings();renderLogs();
+}
+renderAll();
+startStockTimer();
+renderMaintenanceSettings();
+if(isMaintenanceActive())showMaintenance();else showPage("shop");
+</script>
+</body>
+</html>
